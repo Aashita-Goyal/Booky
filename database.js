@@ -33,3 +33,6 @@ const publication = [
 ];
 
 module.exports = {books, author, publication};
+
+
+//model => document model of mongoDb
