@@ -9,15 +9,18 @@ const mongoose = require("mongoose");
 const database = require("./database");
 
 //Models
-const BookModels = require("./book");
-const AuthorModels = require("./author");
-const PublicationModels = require("./publication");
+const BookModel = require("./book");
+const AuthorModel = require("./author");
+const PublicationModel = require("./publication");
 
 //Initialization
 const booky = express();
 
 //configuration
 booky.use(express.json());
+
+//console.log
+
 
 //Establish Database connection
 mongoose
@@ -43,9 +46,9 @@ Access            public (no password entered)
 Parameter         none
 Methods           GET    
 */
-booky.get("/", (req, res) => {
-
-    return res.json({books: database.books});
+booky.get("/", async (req, res) => {
+    const getAllBooks = await BookModel.find();
+    return res.json({books: getAllBooks});
 });
 
 
@@ -57,12 +60,15 @@ Access            public (no password entered)
 Parameter         isbn
 Methods           GET    
 */
-booky.get("/is/:isbn", (req, res) => {
-    const getSpecificBook = database.books.filter(
-        (book) => book.ISBN === req.params.isbn
-    );
+booky.get("/is/:isbn", async (req, res) => {
+    const getSpecificBook = await BookModel.findOne({ISBN: req.params.isbn})
 
-    if(getSpecificBook.length === 0){
+
+   /* const getSpecificBook = database.books.filter(
+        (book) => book.ISBN === req.params.isbn
+    ); */
+
+    if(!getSpecificBook){
         return res.json({
             error: `No book found for the isbn of ${req.params.isbn}`,
         });
@@ -296,22 +302,36 @@ booky.post("/publication/add", (req,res) => {
 
 
 /*  Books API 6
-Route             /book/update/title
+Route             /book/update
 Description       update  book title
 Access            public (no password entered)
 Parameter         isbn
 Methods           PUT  
 */
-booky.put("/book/update/title/:isbn", (req, res) => {
-    //Two approaches - forEach or Map
+booky.put("/book/update/:isbn", async (req, res) => {
+
+    const updateBook = await BookModel.findOneAndUpdate({
+        ISBN: req.params.isbn,
+    },
+    {
+        title:req.body.BookTitle,
+    },
+    {
+        new:true,
+    }
+);
+
+
+
+  /*  //Two approaches - forEach or Map
     //using forEach
     database.books.forEach((book) => {
         if(book.ISBN === req.params.isbn){
             book.title = req.body.newBookTitle;
             return;
         }
-    });
-    return res.json({books: database.books});
+    }); */
+    return res.json({books: updateBook}); 
 });
 
 
