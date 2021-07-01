@@ -1,15 +1,35 @@
+require("dotenv").config();
+
+
 //framework
 const express = require("express");
-//const mongoose = require("mongoose");npn
+const mongoose = require("mongoose");
 
 //Database
 const database = require("./database");
+
+//Models
+const BookModels
 
 //Initialization
 const booky = express();
 
 //configuration
 booky.use(express.json());
+
+//Establish Database connection
+mongoose
+.connect(
+    process.env.MONGO_URL , {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        useFindAndModify: false,
+        useCreateIndex: true
+
+    }
+)
+.then(() => console.log("Connection Established!"));
+
 
 
 
@@ -476,6 +496,16 @@ Methods           DELETE
 
 
 /*  Publication API 7
+Route             
+Description       
+Access            public (no password entered)
+Parameter         
+Methods           DELETE   
+*/
+
+
+
+/*  Publication API 8
 Route             /publication/delete/book
 Description       delete a book from publications
 Access            public (no password entered)
@@ -507,13 +537,7 @@ booky.delete("/publication/delete/book/:isbn/:pubId", (req,res) =>{
 }); 
 
 
-/*  Publication API 8
-Route             
-Description       
-Access            public (no password entered)
-Parameter         
-Methods           DELETE   
-*/
+
 
 
 
