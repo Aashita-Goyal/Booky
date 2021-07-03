@@ -9,9 +9,9 @@ const mongoose = require("mongoose");
 const database = require("./database");
 
 //Models
-const BookModel = require("./book");
-const AuthorModel = require("./author");
-const PublicationModel = require("./publication");
+const BookModel = require("./database/book");
+const AuthorModel = require("./database/author");
+const PublicationModel = require("./database/publication");
 
 //Initialization
 const booky = express();
@@ -50,6 +50,11 @@ booky.get("/", async (req, res) => {
     const getAllBooks = await BookModel.find();
     return res.json({books: getAllBooks});
 });
+/* WAY 1
+ booky.get("/", (req,res) => {
+     return res.json({books: database.books});
+ });
+ */
 
 
 
@@ -64,10 +69,6 @@ booky.get("/is/:isbn", async (req, res) => {
     const getSpecificBook = await BookModel.findOne({ISBN: req.params.isbn})
 
 
-   /* const getSpecificBook = database.books.filter(
-        (book) => book.ISBN === req.params.isbn
-    ); */
-
     if(!getSpecificBook){
         return res.json({
             error: `No book found for the isbn of ${req.params.isbn}`,
@@ -75,6 +76,12 @@ booky.get("/is/:isbn", async (req, res) => {
     }
     return res.json({book: getSpecificBook});
 });
+/*WAY 1
+booky.get("/is/:isbn", async (req, res) => {
+    const getSpecificBook = database.books.filter(
+        (book) => book.ISBN === req.params.isbn
+    ); 
+});*/
 
 
 /*  Books API 3
@@ -234,18 +241,14 @@ booky.get("/publications/book/:books", (req, res) => {
   
     return res.json({ authors: getSpecificPublication });
   });
-
-
-
-
-
-
+  
+  
+  
   
 
 
 
-
-  /*  Books API 5
+ /*  Books API 5
 Route             /book/add
 Description       add new book
 Access            public (no password entered)
@@ -290,25 +293,24 @@ booky.post("/publication/add", (req,res) => {
 
 });
 
+ 
 
 
 
 
 
 
+ 
 
 
-
-
-
-/*  Books API 6
-Route             /book/update
+ /*  Books API 6
+Route             /book/update/title
 Description       update  book title
 Access            public (no password entered)
 Parameter         isbn
 Methods           PUT  
 */
-booky.put("/book/update/:isbn", async (req, res) => {
+booky.put("/book/update/title/:isbn", async (req, res) => {
 
     const updateBook = await BookModel.findOneAndUpdate({
         ISBN: req.params.isbn,
@@ -320,20 +322,24 @@ booky.put("/book/update/:isbn", async (req, res) => {
         new:true,
     }
 );
+return res.json({books: updateBook}); 
+}); 
 
+/*   WAY 1
+booky.put("/book/update/title/:isbn", (req,res) => {
 
+      /Two approaches - forEach or Map
+     /using forEach
 
-  /*  //Two approaches - forEach or Map
-    //using forEach
     database.books.forEach((book) => {
         if(book.ISBN === req.params.isbn){
             book.title = req.body.newBookTitle;
             return;
         }
-    }); */
-    return res.json({books: updateBook}); 
-});
-
+    }); 
+    return res.json({books: database.books}); 
+});  */
+  
 
 
 
@@ -341,20 +347,33 @@ booky.put("/book/update/:isbn", async (req, res) => {
 Route             /book/update/author
 Description       update/add new author
 Access            public (no password entered)
-Parameter         isbn
+Parameter         isbn authorId
 Methods           PUT  
 */
-booky.put("/book/update/author/:isbn/:authorId", (req,res) => {
+booky.put("/book/update/author/:isbn/:authorId", async (req,res) => {
     //update book database 
-       //we check with isbn and push authorId
-    database.books.forEach((book) => {
+    const updateBook = await BookModel.findOneAndUpdate(
+        {
+            ISBN: req.params.isbn,
+        },
+        {
+
+        }
+    );
+});
+       //we check with isbn and push 
+       
+
+  /*  WAY 1
+    booky.put("/book/update/author/:isbn/:authorId",(req,res) => {
+     database.books.forEach((book) => {
         if(book.ISBN === req.params.isbn) {
            return book.author.push(parseInt(req.params.authorId));
         }
     }); 
 
-    //update author database
-       //we check with authorId and push isbn
+      /update author database
+      /we check with authorId and push isbn
     database.author.forEach((author) => {
         if(author.id === parseInt(req.params.authorId)) {
            return author.books.push(req.params.isbn);
@@ -363,8 +382,8 @@ booky.put("/book/update/author/:isbn/:authorId", (req,res) => {
     return res.json({
         books: database.books,
         author: database.author,
-    });
-});
+    }); 
+}); */
 
 
 
@@ -375,38 +394,36 @@ Access            public (no password entered)
 Parameter         id
 Methods           PUT 
 */
-/*booky.put("/author/update/authorId/:id", (req, res) => {
-    database.author.forEach((author) => {
-        if(author.id === req.params.authorId) {
+booky.put("/author/update/name/:name", (req, res) => {
+    database.authors.forEach((author) => {
+        if(author.name === req.params.name) {
             author.name = req.body.newAuthorName;
             return;
         }
     });
-    return res.json({
-        author: database.author,
-    });
-
-}); */
+    return res.json({authors: database.authors});
+});  
 
 
 
 /*  Publication API 5
-Route             /publication/update/name
+Route             /publications/update/name
 Description       update publication name
 Access            public (no password entered)
-Parameter         
+Parameter         name
 Methods           PUT   
 */
-/* booky.put("/publication/update/name/:name", (req, res) => {
-    database.publication.forEach((publication) => {
+booky.put("/publications/update/name/:name", (req, res) => {
+    database.publications.forEach((publication) => {
         if(publication.name === req.params.name){
-            publication.name = req.body.newAuthorName;
+            publication.name = req.body.newPublicationName;
             return;
         }
     });
-    return res.json({publication: database.authors});
+    return res.json({publications: database.publications});
 
-}); */
+});
+
 
 
 /*  Publication API 6
@@ -446,10 +463,6 @@ booky.put("/publication/update/book/:isbn", (req,res) =>{
 
 
 
-
-
-
-
 /*  Books API 8
 Route             /book/delete
 Description       delete a book
@@ -457,14 +470,27 @@ Access            public (no password entered)
 Parameter         isbn
 Methods           DELETE  
 */
-booky.delete("/book/delete/:isbn", (req,res) => {
-    const updatedBookDatabase = database.books.filter(
-        (book) => book.ISBN !== req.params.isbn
-        );
+booky.delete("/book/delete/:isbn", async (req,res) => {
 
-        database.books = updatedBookDatabase;
+    const updatedBookDatabase = await BookModel.findOneAndDelete({
+        ISBN: req.params.isbn,
+    });
+    //const updatedBookDatabase = database.books.filter(
+    //   (book) => book.ISBN !== req.params.isbn
+    //    );
+
+        database.books = updatedBookDatabase; 
         return res.json({books: database.books});
-});
+}); 
+
+ /*  WAY 1
+ booky.delete("/book/delete/:isbn", (req,res) =>{
+    const updatedBookDatabase = database.books.filter(
+           (book) => book.ISBN !== req.params.isbn
+       );
+       database.books = updatedBookDatabase; 
+       return res.json({books: database.books});
+ }); */
 
 
 
@@ -476,8 +502,21 @@ Access            public (no password entered)
 Parameter         isbn
 Methods           DELETE  
 */
-booky.delete("/book/delete/author/:isbn/:authorId", (req,res) =>{
-    //update the book database
+/* booky.delete("/book/delete/author/:isbn/:authorId", async (req,res) =>{
+    const updatedBook = await BookModel.findOneAndUpdate({
+        {
+            ISBN: req.params.isbn,
+      },
+       {
+           $pull: {
+              authors: parseInt(req.params.authorId),
+            },
+       },
+   }); */
+   
+  /*  WAY 1 
+    /update the book database
+   booky.delete("/book/delete/author/:isbn/:authorId", (req,res) => {
     database.books.forEach((book) =>{
         if(book.ISBN === req.params.isbn){
             const newAuthorList = book.authors.filter(
@@ -487,7 +526,7 @@ booky.delete("/book/delete/author/:isbn/:authorId", (req,res) =>{
             return;
         }
     });
-    // update the author database
+    /update the author database
     database.authors.forEach((author) => {
         if(author.id === parseInt(req.params.authorId)){
             const newBooksList = author.books.filter(
@@ -502,28 +541,41 @@ booky.delete("/book/delete/author/:isbn/:authorId", (req,res) =>{
         author: database.authors,
         message: "Author was deleted!",
     });
-}); 
-
+}); */
 
 
 
 /*  Author API 6
-Route             
-Description       
+Route             /author/delete/
+Description       delete an author 
 Access            public (no password entered)
-Parameter         
+Parameter         name
 Methods           DELETE
 */
+booky.delete("/author/delete/:name", (req,res) => {
+    const updatedAuthorDatabase = database.authors.filter(
+        (author) => author.name !== req.params.name
+    );
+    database.authors = updatedAuthorDatabase; 
+    return res.json({authors: database.authors});
+});
 
 
 
 /*  Publication API 7
-Route             
-Description       
+Route             /publication/delete/
+Description       delete the publication
 Access            public (no password entered)
-Parameter         
+Parameter         name
 Methods           DELETE   
 */
+booky.delete("/publication/delete/:nme", (req,res) =>{
+    const updatedPublicationDatabase = database.publications.filter(
+           (publication) => publication.name !== req.params.name
+       );
+       database.publications = updatedPublicationDatabase; 
+       return res.json({publications: database.publications});
+ }); 
 
 
 
@@ -557,49 +609,7 @@ booky.delete("/publication/delete/book/:isbn/:pubId", (req,res) =>{
         publications: database.publication,
     });
 }); 
-
-
-
-
-
-
-
-
-
-
-
-
-//Server Running
-booky.listen(3000, () => console.log("Hey! The server is running!! 😁"));
-
-
-
-
-
-/* we need an agent which can talk to a database (monoDB)
-as well as talk to us
-
-mongoDB understands - *******
-we understand - javascript
-
-
-This agent will be mongoose*/
-
-
-
-
-
-/*
-Why schema?
-
-# mongoDB is schemaless
-# mongoose helps us with validation 
-and relationship with other data
-*/
-
-
-
-
-/*Mongoose model
-this is document model of mongoDb
-*/
+ 
+  
+ //Server Running
+booky.listen(3000, () => console.log("Hey the server is running! 😁"));
