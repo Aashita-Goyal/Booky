@@ -2,8 +2,16 @@ const mongoose = require("mongoose");
 
 // Publication Schema
 const PublicationSchema = mongoose.Schema({
-  id: Number,
-  name: String,
+  id:{
+    type: Number,
+    required: true,
+    minLength: 5,
+    maxLength: 12,
+  },
+  name: {
+    type: String,
+    required: true,
+  },
   books: [String],
 });
 

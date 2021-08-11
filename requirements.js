@@ -22,34 +22,34 @@
 // Books
 // We need an API
 // ****GET****
-// 1 // to get all books ✅
-// 1 // to get specific books✅
-// 3 // to get list of books based on category✅
-// 4 // to get list of books based on languages [task]🚀✅
+// 1 // to get all books ✅✔
+// 1 // to get specific books✅✔
+// 3 // to get list of books based on category✅✔
+// 4 // to get list of books based on languages [task]🚀✅✔
 // ****POST****
-// 5 //add new book✅
+// 5 //add new book✅✔
 // ****PUT****
-// 6 //update book title✅
-// 7 //update/add new author✅
+// 6 //update book title✅✔
+// 7 //update/add new author✅✔
 // ****DELETE****  
-// 8 //delete a book
-// 9 //delete an author
-
+// 8 //delete a book✅✔
+// 9 //delete an author from books✅✔
+            /* For async await codes by Sir, check book APIs */
 
 
 
 //Authors
 // We need an API
 // ****GET****
-// 1 //to get all authors✅
-// 2 //to get specific authors [task]🚀✅
-// 3 //to get list of authors based on books ✅
+// 1 //to get all authors✅✔
+// 2 //to get specific authors [task]🚀✅✔
+// 3 //to get list of authors based on books ✅✔
 // ****POST****
-// 4 //add new author✅
+// 4 //add new author✅✔
 // ****PUT****
-// 5 //update author name
+// 5 //update author name✅✔
 // ****DELETE****  
-// 6 //delete an author 
+// 6 //delete an author✅✔
 
 
 
@@ -57,14 +57,18 @@
 // Publications
 // We need an API
 // ****GET****
-// 1 //to get all publication  ✅
-// 2 //to get specific publication [task] 🚀✅
-// 3 //to get list of publication based on book [task] 🚀✅
+// 1 //to get all publication  ✅✔
+// 2 //to get specific publication [task] 🚀✅✔
+// 3 //to get list of publication based on book [task] 🚀✅✔
 // ****POST****
-// 4 //add new publications✅
+// 4 //add new publications✅✔
 // ****PUT****
-// 5 //update publication name
-// 6 //update/add new books to publications
+// 5 //update publication name✅✔
+// 6 //update/add new books to publications✅✔
 // ****DELETE****  
-// 7 //delete the publication
-// 8 // delete a book from publication
+// 7 //delete the publication✅✔
+// 8 // delete a book from publication✅✔
+
+
+
+//Add mongoose validation to ALL the models
